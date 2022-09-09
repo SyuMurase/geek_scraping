@@ -11,6 +11,8 @@ import os
 options = webdriver.ChromeOptions()
 options.add_argument("--headless")
 browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
+#browser = webdriver.Chrome(ChromeDriverManager().install())
+#options=optionsを消すとブラウザが起動する！！
 url = "https://www.google.co.jp/imghp?hl=ja"
 browser.get(url)
 
@@ -20,8 +22,10 @@ browser.get(url)
 kw_search = browser.find_element_by_css_selector("#sbtc > div > div.a4bIc > input")
 
 from selenium.webdriver.common.keys import Keys
-actor_name = input("画像検索したいものや人のKWを入力してください！：")
-
+#actor_name = input("画像検索したいものや人のKWを入力してください！：")
+actor_name = "齋藤飛鳥"
+actor_name = "saitouasuka"
+save_dir =  actor_name + "/"
 
 kw_search.send_keys(str(actor_name))
 kw_search.send_keys(Keys.ENTER)
@@ -34,7 +38,7 @@ res = requests.get(cur_url)
 #soup = BeautifulSoup(res.text,"html5lib")
 soup = BeautifulSoup(res.text,"lxml")
 
-img_tags = soup.find_all("img",limit = 10)
+img_tags = soup.find_all("img",limit = 22)
 img_urls = []
 
 for img_tag in img_tags:
@@ -45,18 +49,17 @@ for img_tag in img_tags:
 #取得した画像のデータを保存する
 
 
-save_dir = "画像ダウンロードフォルダ/"
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
-a=1
+a=0
+
 for elem_url in img_urls:
     try:
-
         r = requests.get(elem_url)
-        with open(save_dir + str(actor_name) +"画像"+str(a)+".jpg","wb") as fp:
+        with open(save_dir + str(actor_name) +"_"+str(a)+".jpg","wb") as fp:
             fp.write(r.content)
         a += 1
-        sleep(0.1)
+        sleep(1)
     except:
         pass
 
